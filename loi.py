@@ -1,15 +1,15 @@
 import re
 import numpy as np
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 sia=SentimentIntensityAnalyzer()
 
 
 #                   Needed:                 #
-#init with variables {EntryID,Entry,WordCount,Date,StartTime,TotalTime,Compound}
-#Store function
+#       init with variables {EntryID,Entry,WordCount,Date,StartTime,TotalTime,Compound}
+#       Store function
 #Date seperator function - comes in when graphing
 #Bool return function = empty entries
 #Graph function
@@ -18,9 +18,9 @@ sia=SentimentIntensityAnalyzer()
 
 
 
-class DiaryClassifiers(object):
+class DiaryClassifiers():
 
-    def __init__(self,I=0,E=0,C=0,D=0,S=0,T=0,X=0):
+    def __init__(self,I=[],E=[],C=[],D=[],S=[],T=[],X=[]):
         self.entry_id=I
         self.entry=E
         self.word_count=C
@@ -28,19 +28,20 @@ class DiaryClassifiers(object):
         self.start_time=S
         self.total_time=T
         self.compound=X
-        self.diary={self.entry_id:
-                    {
-                    'entry':self.entry,
-                    'word count':self.word_count,
-                    'date':self.date,
-                    'start_time':self.start_time,
-                    'total time':self.total_time,
-                    'compound':self.compound
-                    }
-                    }   
+        # self.diary={self.entry_id:
+        #             {
+        #             'entry':self.entry,
+        #             'word count':self.word_count,
+        #             'date':self.date,
+        #             'start_time':self.start_time,
+        #             'total time':self.total_time,
+        #             'compound':self.compound
+        #             }
+        #             }   
 
     def DiaryAssignment(self):
 
+        count=-1
 
         with open("/Users/Hp/OneDrive/UMD/Summer 2023/ENGR_492/TextCorpus/grand_diary.txt") as grandjournal:
             
@@ -62,49 +63,70 @@ class DiaryClassifiers(object):
 
                 
                 sentiment_score=sia.polarity_scores(entry)
+                
+                self.entry_id.append(count+1)
+                self.entry.append(x[16:-5])
+                self.word_count.append(wc)
+                self.date.append(x[:11])
+                self.start_time.append(started)
+                self.total_time.append(int(tot))
+                self.compound.append(sentiment_score['compound'])
 
-                self.diary[self.entry_id]['entry']=x[16:-5]
-                self.diary[self.entry_id]['word count']=wc
-                self.diary[self.entry_id]['date']=x[:11]
-                self.diary[self.entry_id]['start_time']=started
-                self.diary[self.entry_id]['total_time']=tot
-                self.diary[self.entry_id]['compound']=sentiment_score['compound']
+                count=count+1
+
+                # self.diary[self.entry_id]['entry']=x[16:-5]
+                # self.diary[self.entry_id]['word count']=wc
+                # self.diary[self.entry_id]['date']=x[:11]
+                # self.diary[self.entry_id]['start_time']=started
+                # self.diary[self.entry_id]['total_time']=tot
+                # self.diary[self.entry_id]['compound']=sentiment_score['compound']
 
 
-                self.entry_id=self.entry_id+1
-                self.diary[self.entry_id]={}
-
-
-
+                # self.entry_id=self.entry_id+1
+                # self.diary[self.entry_id]={}
+        print('here')
+                       
     def Visual(self):
 
-        #If individual
+        #### lack of data codes ####
+        #  5555 in total_time = no duration
+        #  0000 in start_time = no start
+        #  '00'/xx/xxx in date = no season
+
+        x_val=None
+        y_val=None
 
 
 
-        #If line graph
 
+        plt.scatter(sorted(self.word_count),self.compound)
+        plt.xticks(rotation = 90) # Rotates X-Axis Ticks by 45-degrees
+        plt.xticks(fontsize=10)
+        plt.ylabel("Polarity")
+        plt.xlabel("independent")
+        plt.title("Selected Comparison: ")
+        plt.legend()
+        plt.show()
 
         pass
 
-    def InvertedSearch(self):
-        
+    def InvertedSearch(input1):
+
+
+       
         print("Welcome to the LOI Sentiment Analyzer")
-        print("\n { All-time, Year range (2012-2022), Season, Word Count, Diary Length } \n")
+        print("\n { All-time, Year range (2012-2022), Season {Winter, Summer, Spring, Fall}, Word Count } \n")
         independent=input("Please choose an Independent variable from the above list: ")
 
-        pass
-
-
-
-
-            
+        return independent
+     
 def main():
 
     main_run=DiaryClassifiers()
 
     main_run.DiaryAssignment()
-    main_run.InvertedSearch()
+    main_run.Visual()
+    #main_run.InvertedSearch()
 
     print("me")
 
