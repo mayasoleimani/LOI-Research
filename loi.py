@@ -1,6 +1,6 @@
 import re
 import numpy as np
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 
 
@@ -14,7 +14,7 @@ sia=SentimentIntensityAnalyzer()
 #Bool return function = empty entries
 #Graph function
 
-#running main
+#       running main
 
 
 
@@ -112,11 +112,21 @@ class DiaryClassifiers():
 
     def InvertedSearch(input1):
 
-
-       
+        input_list=["all-time", "all time", "alltime","winter","summer","spring","fall"]
+        input_check=0
         print("Welcome to the LOI Sentiment Analyzer")
         print("\n { All-time, Year range (2012-2022), Season {Winter, Summer, Spring, Fall}, Word Count } \n")
-        independent=input("Please choose an Independent variable from the above list: ")
+        while input_check == 0:
+
+            independent=input("\nPlease choose an Independent variable from the above list: ")
+
+            if (int(independent) not in range(2012,2023)) or (independent.lower() not in input_list):
+                print("\nMispelled entry or not in list, try again")
+                input_check == 0 
+            else:
+                input_check=+1
+                #break
+
 
         return independent
      
@@ -125,8 +135,8 @@ def main():
     main_run=DiaryClassifiers()
 
     main_run.DiaryAssignment()
-    main_run.Visual()
-    #main_run.InvertedSearch()
+    #main_run.Visual()
+    main_run.InvertedSearch()
 
     print("me")
 
