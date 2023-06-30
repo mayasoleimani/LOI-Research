@@ -86,6 +86,37 @@ class DiaryClassifiers():
                 # self.diary[self.entry_id]={}
         print('here')
                        
+    def InvertedSearch():
+
+        input_list=["all-time", "all time", "alltime","word count","winter","summer","spring","fall","year range", "yearrange","yearange"]
+        input_check=0
+        print("Welcome to the LOI Sentiment Analyzer")
+        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Word Count } \n")
+        while input_check == 0:
+
+            independent=input("\nPlease choose an Independent variable from the above list\n ----> ")
+
+            if independent.lower() not in input_list:
+                print("\nMispelled entry or not in list, try again")
+                input_check == 0 
+            else:
+                input_check=+1
+
+        if independent.lower() == ("year range" or "yearrange" or "yearange"):
+            while input_check ==1:
+
+                
+                    years=input("Please select a range of years in {2012-2022}\n ex: '2014-2016' OR '2016-2017' OR '2012-2022'\n ----> ")
+                    if (int(years[:4]) or int(years[5:])) not in range(2012,2023):
+                        print("\nMispelled entry or not in list, try again\n")
+                        input_check == 1
+                    else:
+                        return years
+
+
+        else:
+            return independent
+        
     def Visual(self):
 
         #### lack of data codes ####
@@ -96,8 +127,9 @@ class DiaryClassifiers():
         x_val=None
         y_val=None
 
+        input1=DiaryClassifiers.InvertedSearch()
 
-
+        print(input1)
 
         plt.scatter(sorted(self.word_count),self.compound)
         plt.xticks(rotation = 90) # Rotates X-Axis Ticks by 45-degrees
@@ -109,34 +141,13 @@ class DiaryClassifiers():
         plt.show()
 
         pass
-
-    def InvertedSearch(input1):
-
-        input_list=["all-time", "all time", "alltime","winter","summer","spring","fall"]
-        input_check=0
-        print("Welcome to the LOI Sentiment Analyzer")
-        print("\n { All-time, Year range (2012-2022), Season {Winter, Summer, Spring, Fall}, Word Count } \n")
-        while input_check == 0:
-
-            independent=input("\nPlease choose an Independent variable from the above list: ")
-
-            if (int(independent) not in range(2012,2023)) or (independent.lower() not in input_list):
-                print("\nMispelled entry or not in list, try again")
-                input_check == 0 
-            else:
-                input_check=+1
-                #break
-
-
-        return independent
      
 def main():
 
     main_run=DiaryClassifiers()
 
     main_run.DiaryAssignment()
-    #main_run.Visual()
-    main_run.InvertedSearch()
+    main_run.Visual()
 
     print("me")
 
