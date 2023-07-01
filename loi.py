@@ -13,7 +13,6 @@ sia=SentimentIntensityAnalyzer()
 #Date seperator function - comes in when graphing
 #Bool return function = empty entries
 #Graph function
-
 #       running main
 
 
@@ -88,10 +87,10 @@ class DiaryClassifiers():
                        
     def InvertedSearch():
 
-        input_list=["all-time", "all time", "alltime","word count","winter","summer","spring","fall","year range", "yearrange","yearange"]
+        input_list=["word count","start time","duration","winter","summer","spring","fall","year range"]
         input_check=0
         print("Welcome to the LOI Sentiment Analyzer")
-        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Word Count } \n")
+        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Word Count, Start Time, Duration} \n")
         while input_check == 0:
 
             independent=input("\nPlease choose an Independent variable from the above list\n ----> ")
@@ -102,7 +101,7 @@ class DiaryClassifiers():
             else:
                 input_check=+1
 
-        if independent.lower() == ("year range" or "yearrange" or "yearange"):
+        if independent.lower() == ("year range"):
             while input_check ==1:
 
                 
@@ -123,15 +122,35 @@ class DiaryClassifiers():
         #  5555 in total_time = no duration
         #  0000 in start_time = no start
         #  '00'/xx/xxx in date = no season
-
+        seasons=['winter', 'summer', 'fall', 'spring']
         x_val=None
-        y_val=None
-
+        x_val_label=''
         input1=DiaryClassifiers.InvertedSearch()
+        temp_x=[]
+        temp_y=[]
+        # word count, year range, season
 
-        print(input1)
+        if input1 == "word count":
+            x_val_label== "Word Count"
+            x_val== self.word_count
+            pass
+        elif input1 == "start time":
+            pass
+        elif input1 == "duration":
+            pass
+        elif input1 in seasons:
+            if self.date[:1] is ('12' or '01' or '02'):
+                x_val_label== seasons[0]
+                temp_x.append()
 
-        plt.scatter(sorted(self.word_count),self.compound)
+            pass
+        elif (input1[:4] or input1[5:]) is int:
+            pass
+
+        
+
+
+        plt.scatter(sorted(x_val),self.compound)
         plt.xticks(rotation = 90) # Rotates X-Axis Ticks by 45-degrees
         plt.xticks(fontsize=10)
         plt.ylabel("Polarity")
