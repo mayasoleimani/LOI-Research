@@ -1,5 +1,3 @@
-import re
-import numpy as np
 from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 
@@ -11,7 +9,6 @@ sia=SentimentIntensityAnalyzer()
 #       init with variables {EntryID,Entry,WordCount,Date,StartTime,TotalTime,Compound}
 #       Store function
 #Date seperator function - comes in when graphing
-#Bool return function = empty entries
 #Graph function
 #       running main
 
@@ -123,39 +120,42 @@ class DiaryClassifiers():
         #  0000 in start_time = no start
         #  '00'/xx/xxx in date = no season
         seasons=['winter', 'summer', 'fall', 'spring']
-        x_val=None
+        #for x in compound, if true, save the index in compound and other y variable
+        x_val=[]
+        y_val=[]
         x_val_label=''
         input1=DiaryClassifiers.InvertedSearch()
-        temp_x=[]
-        temp_y=[]
-        # word count, year range, season
+        
+        # word count, year range, season, start time, duration
 
-        if input1 == "word count":
-            x_val_label== "Word Count"
-            x_val== self.word_count
-            pass
-        elif input1 == "start time":
-            pass
-        elif input1 == "duration":
-            pass
-        elif input1 in seasons:
-            if self.date[:1] is ('12' or '01' or '02'):
-                x_val_label== seasons[0]
-                temp_x.append()
+        for x in self.compound:
 
-            pass
-        elif (input1[:4] or input1[5:]) is int:
-            pass
+            if input1 == "word count":
+                x_val_label== "Word Count"
+                x_val== self.word_count
+                pass
+            elif input1 == "start time":
+                pass
+            elif input1 == "duration":
+                pass
+            elif input1 in seasons:
+                if self.date[:1] is ('12' or '01' or '02'):
+                    x_val_label== seasons[0]
+
+                pass
+            elif (input1[:4] or input1[5:]) is int:
+                pass
 
         
+        #for year ranges, include splitting the x label (if its three years for example , youre gonna want like 12 x ticks)
 
 
-        plt.scatter(sorted(x_val),self.compound)
+        plt.scatter(sorted(self.word_count),self.compound)
         plt.xticks(rotation = 90) # Rotates X-Axis Ticks by 45-degrees
         plt.xticks(fontsize=10)
         plt.ylabel("Polarity")
         plt.xlabel("independent")
-        plt.title("Selected Comparison: ")
+        plt.title("Selected Comparison: %s" % input1)
         plt.legend()
         plt.show()
 
