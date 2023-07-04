@@ -7,11 +7,9 @@ sia=SentimentIntensityAnalyzer()
 
 
 #                   Needed:                 #
-#       init with variables {EntryID,Entry,WordCount,Date,StartTime,TotalTime,Compound}
-#       Store function
 #Date seperator function - comes in when graphing
 #Graph function
-#       running main
+#separate y range by color
 
 
 
