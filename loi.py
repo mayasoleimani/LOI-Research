@@ -1,3 +1,4 @@
+import numpy as np
 from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 
@@ -80,6 +81,8 @@ class DiaryClassifiers():
 
                 # self.entry_id=self.entry_id+1
                 # self.diary[self.entry_id]={}
+
+                
         print('here')
                        
     def InvertedSearch():
@@ -123,40 +126,52 @@ class DiaryClassifiers():
         #for x in compound, if true, save the index in compound and other y variable
         x_val=[]
         y_val=[]
-        x_val_label=''
         input1=DiaryClassifiers.InvertedSearch()
         
         # word count, year range, season, start time, duration
 
-        for x in self.compound:
+        for x in range(0,len(self.compound)):
 
             if input1 == "word count":
-                x_val_label== "Word Count"
-                x_val== self.word_count
+                x_val.append(self.word_count[x])
+                y_val.append(self.compound[x])
                 pass
+                
             elif input1 == "start time":
                 pass
             elif input1 == "duration":
                 pass
             elif input1 in seasons:
                 if self.date[:1] is ('12' or '01' or '02'):
-                    x_val_label== seasons[0]
 
-                pass
+                    pass
             elif (input1[:4] or input1[5:]) is int:
                 pass
+        
+        #POS, NEU, NEGATIVE SCORE
+        pos,neu,neg=0,0,0
+        for x in y_val:
+            if x >= .05:
+                pos+=1
+            elif x < .05 and x > -.05:
+                neu+=1
+            elif x <= -.05:
+                neg+=1
+            
 
         
         #for year ranges, include splitting the x label (if its three years for example , youre gonna want like 12 x ticks)
+        ind_axis_iter=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
 
+        plt.scatter(x_val,y_val,c='#26E78C', marker=".", s=40,edgecolors='b',label="Positive: %s " % pos)
+        # plt.scatter(x_val,y_val, c='#F9A500', marker=".", s=40,edgecolors='b',label="Neutral: %s " % neu)
+        # plt.scatter(x_val,y_val, c='#0E5EDE',marker=".", s=40,edgecolors='b',label="Negative: %s" % neg)
 
-        plt.scatter(sorted(self.word_count),self.compound)
-        plt.xticks(rotation = 90) # Rotates X-Axis Ticks by 45-degrees
-        plt.xticks(fontsize=10)
+        plt.xticks(ind_axis_iter,fontsize =10,rotation = 90) # Rotates X-Axis Ticks by 45-degrees
         plt.ylabel("Polarity")
-        plt.xlabel("independent")
-        plt.title("Selected Comparison: %s" % input1)
-        plt.legend()
+        plt.xlabel("%s" % input1.capitalize())
+        plt.title("Selected Comparison: Polarity vs %s" % input1)
+        plt.legend(loc="best")
         plt.show()
 
         pass
