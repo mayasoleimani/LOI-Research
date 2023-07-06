@@ -1,4 +1,5 @@
 import numpy as np
+import datetime
 from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 
@@ -34,7 +35,7 @@ class DiaryClassifiers():
         #             }
         #             }   
 
-    def DiaryAssignment(self):
+    def setDiary(self):
 
         count=-1
 
@@ -45,15 +46,20 @@ class DiaryClassifiers():
                 entry=x[16:-5]
                 started=x[11:15]
                 wc=len(x[16:-5].split())
+                ended=x[len(x)-5:-1]
 
-#               no duration recorded
-                if x[11:15]!='0000' and x[len(x)-5:-1]!='0000':
-                    
-                    ended=x[len(x)-5:-1]
-                    tot=int(ended)-int(started)
-                
+#               duration condition
+                if started !='0000' and ended!='0000':
+                    if started < ended:
+                        starttime = datetime.datetime.strptime(started, '%H%M')
+                        endtime = datetime.datetime.strptime(ended, '%H%M')
+                        tot=(endtime-starttime).total_seconds()/60
+                    else:
+                        started=int(started)
+                        ended=int(ended)
+                        ended+=2360
+                        tot=int(ended)-int(started)
                 else:
-#                   error number for lack of total time
                     tot='5555'
 
                 
@@ -80,10 +86,8 @@ class DiaryClassifiers():
                 # self.entry_id=self.entry_id+1
                 # self.diary[self.entry_id]={}
 
-                
-        print('here')
                        
-    def InvertedSearch():
+    def getSearch():
 
         input_list=["word count","start time","duration","winter","summer","spring","fall","year range"]
         input_check=0
@@ -113,17 +117,16 @@ class DiaryClassifiers():
         else:
             return independent
         
-    def Visual(self):
+    def setSearch(self):
 
         #### lack of data codes ####
         #  5555 in total_time = no duration
         #  0000 in start_time = no start
         #  '00'/xx/xxx in date = no season
-        seasons=['winter', 'summer', 'fall', 'spring']
         #for x in compound, if true, save the index in compound and other y variable
         x_val=[]
         y_val=[]
-        input1=DiaryClassifiers.InvertedSearch()
+        input1=DiaryClassifiers.getSearch()
         
         # word count, year range, season, start time, duration
 
@@ -164,7 +167,13 @@ class DiaryClassifiers():
             elif (input1[:4] or input1[5:]) is int:
                 pass
         
-        # count POS, NEU, NEG
+        return DiaryClassifiers.visual(x_val,y_val,input1)
+        
+
+
+    def visual(x_val,y_val,user_input):
+        #x_val,y_val,user_input=DiaryClassifiers.setSearch()
+     # count POS, NEU, NEG
         pos,neu,neg=0,0,0
         for x in y_val:
             if x >= .05:
@@ -184,19 +193,18 @@ class DiaryClassifiers():
 
         plt.xticks(ind_axis_iter,fontsize =10,rotation = 90) # Rotates X-Axis Ticks by 45-degrees
         plt.ylabel("Polarity")
-        plt.xlabel("%s" % input1.capitalize())
-        plt.title("Selected Comparison: Polarity vs %s" % input1)
+        plt.xlabel("%s" % user_input.capitalize())
+        plt.title("Selected Comparison: Polarity vs %s" % user_input)
         plt.legend(loc="best")
         plt.show()
 
-        pass
-     
 def main():
 
     main_run=DiaryClassifiers()
 
-    main_run.DiaryAssignment()
-    main_run.Visual()
+    main_run.setDiary()
+    main_run.setSearch()
+    main_run.visual()
 
     print("me")
 
