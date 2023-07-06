@@ -8,9 +8,9 @@ sia=SentimentIntensityAnalyzer()
 
 
 #                   Needed:                 #
-#Date seperator function - comes in when graphing
-#Graph function
-#separate y range by color
+# Graph
+#   fix scale for graph
+#   need legend for pos,neu,neg
 
 
 
@@ -70,7 +70,7 @@ class DiaryClassifiers():
                 self.word_count.append(wc)
                 self.date.append(x[:10])
                 self.start_time.append(started)
-                self.total_time.append(int(tot))
+                self.total_time.append(tot)
                 self.compound.append(sentiment_score['compound'])
 
                 count=count+1
@@ -85,6 +85,7 @@ class DiaryClassifiers():
 
                 # self.entry_id=self.entry_id+1
                 # self.diary[self.entry_id]={}
+        print('here')
 
                        
     def getSearch():
@@ -119,32 +120,23 @@ class DiaryClassifiers():
         
     def setSearch(self):
 
-        #### lack of data codes ####
-        #  5555 in total_time = no duration
-        #  0000 in start_time = no start
-        #  '00'/xx/xxx in date = no season
-        #for x in compound, if true, save the index in compound and other y variable
         x_val=[]
         y_val=[]
         input1=DiaryClassifiers.getSearch()
         
-        # word count, year range, season, start time, duration
-
         for x in range(0,len(self.compound)):
 
             if input1 == "word count":
                 x_val.append(self.word_count[x])
                 y_val.append(self.compound[x])
              
-            elif input1 == "start time":
-                if self.start_time[x]!= '0000':
-                    x_val.append(self.start_time[x])
-                    y_val.append(self.compound[x])
+            elif input1 == "start time" and self.start_time[x] != '0000':
+                x_val.append(int(self.start_time[x]))
+                y_val.append(self.compound[x])
 
-            elif input1 == "duration":
-                if self.total_time[x] != '5555':
-                    x_val.append(self.total_time[x])
-                    y_val.append(self.compound[x])
+            elif input1 == "duration" and self.total_time[x] != '5555':
+                x_val.append(self.total_time[x])
+                y_val.append(self.compound[x])
 
             elif input1 in ('winter','spring','summer','fall'):
 
@@ -164,39 +156,47 @@ class DiaryClassifiers():
                     y_val.append(self.compound[x])
 
                 
-            elif (input1[:4] or input1[5:]) is int:
-                pass
-        
+            elif len(input1) == 9:
+                first_year=int(input1[:4])
+                second_year=int(input1[5:])
+
+                if int(self.date[x][6:10]) in range(first_year,second_year+1):
+                    x_val.append(self.date[x])
+                    y_val.append(self.compound[x])
+
         return DiaryClassifiers.visual(x_val,y_val,input1)
         
-
-
     def visual(x_val,y_val,user_input):
-        #x_val,y_val,user_input=DiaryClassifiers.setSearch()
-     # count POS, NEU, NEG
+
+        x_tick_iterator=None
+
         pos,neu,neg=0,0,0
-        for x in y_val:
-            if x >= .05:
+        for i in range(0,len(y_val)):
+            if y_val[i] >= .05:
                 pos+=1
-            elif x < .05 and x > -.05:
+                plt.scatter(x_val[i],y_val[i],c='#15F500', s=35,edgecolors='b')
+
+            elif y_val[i] < .05 and y_val[i] > -.05:
                 neu+=1
-            elif x <= -.05:
+                plt.scatter(x_val[i],y_val[i], c='#F5F300',  s=35,edgecolors='b')
+
+            elif y_val[i] <= -.05:
                 neg+=1
-            
-        #for year ranges, include splitting the x label (if its three years for example , youre gonna want like 12 x ticks)
-        #this works for wordcount v , eventually will get condition for everything
-        #ind_axis_iter=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
+                plt.scatter(x_val[i],y_val[i], c='#F52900', s=35,edgecolors='b')
 
-        plt.scatter(x_val,y_val,c='#26E78C', marker=".", s=40,edgecolors='b',label="Positive: %s " % pos)
-        # plt.scatter(x_val,y_val, c='#F9A500', marker=".", s=40,edgecolors='b',label="Neutral: %s " % neu)
-        # plt.scatter(x_val,y_val, c='#0E5EDE',marker=".", s=40,edgecolors='b',label="Negative: %s" % neg)
-
-        plt.xticks(ind_axis_iter,fontsize =10,rotation = 90) # Rotates X-Axis Ticks by 45-degrees
+        #x tick marking
+        if user_input in ('word count', 'start time', 'duration'):
+            x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
+        elif user_input in ('winter','spring','fall','summer'):
+            pass
+        
+        plt.xticks(x_tick_iterator,fontsize =10,rotation = 90) # Rotates X-Axis Ticks by 45-degrees
         plt.ylabel("Polarity")
         plt.xlabel("%s" % user_input.capitalize())
         plt.title("Selected Comparison: Polarity vs %s" % user_input)
         plt.legend(loc="best")
         plt.show()
+        pass
 
 def main():
 
@@ -204,7 +204,6 @@ def main():
 
     main_run.setDiary()
     main_run.setSearch()
-    main_run.visual()
 
     print("me")
 
