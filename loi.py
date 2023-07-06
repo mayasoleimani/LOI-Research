@@ -86,8 +86,7 @@ class DiaryClassifiers():
                 # self.entry_id=self.entry_id+1
                 # self.diary[self.entry_id]={}
         print('here')
-
-                       
+                
     def getSearch():
 
         input_list=["word count","start time","duration","winter","summer","spring","fall","year range"]
