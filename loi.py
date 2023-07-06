@@ -62,7 +62,7 @@ class DiaryClassifiers():
                 self.entry_id.append(count+1)
                 self.entry.append(x[16:-5])
                 self.word_count.append(wc)
-                self.date.append(x[:11])
+                self.date.append(x[:10])
                 self.start_time.append(started)
                 self.total_time.append(int(tot))
                 self.compound.append(sentiment_score['compound'])
@@ -101,7 +101,6 @@ class DiaryClassifiers():
 
         if independent.lower() == ("year range"):
             while input_check ==1:
-
                 
                     years=input("Please select a range of years in {2012-2022}\n ex: '2014-2016' OR '2016-2017' OR '2012-2022'\n ----> ")
                     if (int(years[:4]) or int(years[5:])) not in range(2012,2023):
@@ -133,20 +132,39 @@ class DiaryClassifiers():
             if input1 == "word count":
                 x_val.append(self.word_count[x])
                 y_val.append(self.compound[x])
-                pass
-                
+             
             elif input1 == "start time":
-                pass
-            elif input1 == "duration":
-                pass
-            elif input1 in seasons:
-                if self.date[:1] is ('12' or '01' or '02'):
+                if self.start_time[x]!= '0000':
+                    x_val.append(self.start_time[x])
+                    y_val.append(self.compound[x])
 
-                    pass
+            elif input1 == "duration":
+                if self.total_time[x] != '5555':
+                    x_val.append(self.total_time[x])
+                    y_val.append(self.compound[x])
+
+            elif input1 in ('winter','spring','summer','fall'):
+
+                my_month=self.date[x][:2]
+
+                if input1 == 'winter' and my_month in ('12','01','02'):
+                    x_val.append(self.date[x])
+                    y_val.append(self.compound[x])
+                elif input1 == 'spring' and my_month in ('03','04','05'):
+                    x_val.append(self.date[x])
+                    y_val.append(self.compound[x])
+                elif input1 == 'summer' and my_month in ('06','07','08'):
+                    x_val.append(self.date[x])
+                    y_val.append(self.compound[x])
+                elif input1 == 'fall' and my_month in ('09','10','11'):
+                    x_val.append(self.date[x])
+                    y_val.append(self.compound[x])
+
+                
             elif (input1[:4] or input1[5:]) is int:
                 pass
         
-        #POS, NEU, NEGATIVE SCORE
+        # count POS, NEU, NEG
         pos,neu,neg=0,0,0
         for x in y_val:
             if x >= .05:
@@ -156,10 +174,9 @@ class DiaryClassifiers():
             elif x <= -.05:
                 neg+=1
             
-
-        
         #for year ranges, include splitting the x label (if its three years for example , youre gonna want like 12 x ticks)
-        ind_axis_iter=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
+        #this works for wordcount v , eventually will get condition for everything
+        #ind_axis_iter=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
 
         plt.scatter(x_val,y_val,c='#26E78C', marker=".", s=40,edgecolors='b',label="Positive: %s " % pos)
         # plt.scatter(x_val,y_val, c='#F9A500', marker=".", s=40,edgecolors='b',label="Neutral: %s " % neu)
