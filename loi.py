@@ -1,7 +1,8 @@
 import numpy as np
 import datetime
 from nltk.sentiment import SentimentIntensityAnalyzer
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib import dates as mpl_dates
 
 
 sia=SentimentIntensityAnalyzer()
@@ -11,6 +12,7 @@ sia=SentimentIntensityAnalyzer()
 # Graph
 #   fix scale for graph
 #   need legend for pos,neu,neg
+#   add a byes statistic function
 
 
 
@@ -168,31 +170,63 @@ class DiaryClassifiers():
     def visual(x_val,y_val,user_input):
 
         x_tick_iterator=None
-
         pos,neu,neg=0,0,0
-        for i in range(0,len(y_val)):
-            if y_val[i] >= .05:
-                pos+=1
-                plt.scatter(x_val[i],y_val[i],c='#15F500', s=35,edgecolors='b')
-
-            elif y_val[i] < .05 and y_val[i] > -.05:
-                neu+=1
-                plt.scatter(x_val[i],y_val[i], c='#F5F300',  s=35,edgecolors='b')
-
-            elif y_val[i] <= -.05:
-                neg+=1
-                plt.scatter(x_val[i],y_val[i], c='#F52900', s=35,edgecolors='b')
-
-        #x tick marking
-        if user_input in ('word count', 'start time', 'duration'):
-            x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
-        elif user_input in ('winter','spring','fall','summer'):
-            pass
+        # min_val=min(x_val)
+        # max_val=max(x_val)
         
-        plt.xticks(x_tick_iterator,fontsize =10,rotation = 90) # Rotates X-Axis Ticks by 45-degrees
+        # #each request's specified parameters
+        # if user_input in ('word count', 'duration'):
+        #     x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
+
+
+
+        # elif user_input in ('winter','spring','fall','summer'):
+        #     fig = plt.figure(figsize=(18, 8))
+        #     ax = fig.add_subplot()
+
+        #     ax.xaxis.set_major_locator(mpl_dates.MonthLocator(interval=15))
+        #     ax.xaxis.set_major_formatter(mpl_dates.DateFormatter('%b , %d'))
+
+        #     ax.set(xlabel="%s" % user_input,
+        #             ylabel="Polarity",
+        #             title="Selected Comparison: Polarity vs %s" % user_input.capitalize(),
+        #             xlim=[min_val , max_val])
+
+        #     fig.autofmt_xdate()
+        #     plt.scatter(x_val,y_val,c='#11C600', s=35,edgecolors='k')
+        #     plt.tight_layout()
+        #     ax.grid(True)
+        #     plt.show()
+
+
+
+
+        # elif user_input == 'start time':
+        #     x_tick_iterator=range(0000,2400,160)
+
+
+
+
+
+        for i in range(0,len(y_val)):
+            if y_val[i] >= .25:
+                pos+=1
+                plt.scatter(x_val[i],y_val[i],c='#11C600', s=35,edgecolors='k')
+
+            elif y_val[i] < .25 and y_val[i] > -.25:
+                neu+=1
+                plt.scatter(x_val[i],y_val[i], c='#F5F300',  s=35,edgecolors='k')
+
+            elif y_val[i] <= -.25:
+                neg+=1
+                plt.scatter(x_val[i],y_val[i], c='#F52900', s=35,edgecolors='k')
+
+   
+
+        plt.xticks(x_tick_iterator,fontsize =10,rotation = 45) # Rotates X-Axis Ticks by 45-degrees
         plt.ylabel("Polarity")
         plt.xlabel("%s" % user_input.capitalize())
-        plt.title("Selected Comparison: Polarity vs %s" % user_input)
+        plt.title("Selected Comparison: Polarity vs %s" % user_input.capitalize())
         plt.legend(loc="best")
         plt.show()
         pass
