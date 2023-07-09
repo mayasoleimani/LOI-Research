@@ -144,16 +144,16 @@ class DiaryClassifiers():
                 my_month=self.date[x][:2]
 
                 if input1 == 'winter' and my_month in ('12','01','02'):
-                    x_val.append(self.date[x])
+                    x_val.append(self.date[x][:5])
                     y_val.append(self.compound[x])
                 elif input1 == 'spring' and my_month in ('03','04','05'):
-                    x_val.append(self.date[x])
+                    x_val.append(self.date[x][:5])
                     y_val.append(self.compound[x])
                 elif input1 == 'summer' and my_month in ('06','07','08'):
-                    x_val.append(self.date[x])
+                    x_val.append(self.date[x][:5])
                     y_val.append(self.compound[x])
                 elif input1 == 'fall' and my_month in ('09','10','11'):
-                    x_val.append(self.date[x])
+                    x_val.append(self.date[x][:5])
                     y_val.append(self.compound[x])
 
                 
@@ -171,16 +171,13 @@ class DiaryClassifiers():
 
         x_tick_iterator=None
         pos,neu,neg=0,0,0
-        # min_val=min(x_val)
-        # max_val=max(x_val)
-        
-        # #each request's specified parameters
-        # if user_input in ('word count', 'duration'):
-        #     x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
-
+        min_val=min(x_val)
+        max_val=max(x_val)
+        #each request's specified parameters
 
 
         # elif user_input in ('winter','spring','fall','summer'):
+
         #     fig = plt.figure(figsize=(18, 8))
         #     ax = fig.add_subplot()
 
@@ -199,35 +196,62 @@ class DiaryClassifiers():
         #     plt.show()
 
 
-
-
         # elif user_input == 'start time':
         #     x_tick_iterator=range(0000,2400,160)
 
 
+        if user_input in ('winter','spring','fall','summer'):
+
+            for i in range(1,len(x_val)):
+                key = x_val[i]
+                key_y=y_val[i]
+                j = i - 1
+                while j >= 0 and x_val[j] > key :
+                    x_val[j + 1] = x_val[j]
+                    y_val[j+1] = y_val[j]
+                    j -= 1
+                x_val[j + 1] = key
+                y_val[j+ 1] = key_y
 
 
+
+
+
+        elif len(user_input) == 9:
+            first_year=int(user_input[:4])
+            second_year=int(user_input[5:])
+        elif user_input in ('word count', 'duration'):
+            x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
+
+
+
+        pos_x,pos_y=[],[]
+        neu_x,neu_y=[],[]
+        neg_x,neg_y=[],[]
 
         for i in range(0,len(y_val)):
-            if y_val[i] >= .25:
+            if y_val[i] >= .10:
                 pos+=1
-                plt.scatter(x_val[i],y_val[i],c='#11C600', s=35,edgecolors='k')
+                pos_x.append(x_val[i])
+                pos_y.append(y_val[i])
 
-            elif y_val[i] < .25 and y_val[i] > -.25:
+            elif y_val[i] < .10 and y_val[i] > -.10:
                 neu+=1
-                plt.scatter(x_val[i],y_val[i], c='#F5F300',  s=35,edgecolors='k')
-
-            elif y_val[i] <= -.25:
+                neu_x.append(x_val[i])
+                neu_y.append(y_val[i])
+            elif y_val[i] <= -.10:
                 neg+=1
-                plt.scatter(x_val[i],y_val[i], c='#F52900', s=35,edgecolors='k')
+                neg_x.append(x_val[i])
+                neg_y.append(y_val[i])
 
    
-
+        plt.scatter(x_val,y_val, c='#11C600', s=35,edgecolors='k')
         plt.xticks(x_tick_iterator,fontsize =10,rotation = 45) # Rotates X-Axis Ticks by 45-degrees
         plt.ylabel("Polarity")
         plt.xlabel("%s" % user_input.capitalize())
         plt.title("Selected Comparison: Polarity vs %s" % user_input.capitalize())
         plt.legend(loc="best")
+        plt.tight_layout()
         plt.show()
         pass
 
