@@ -76,28 +76,16 @@ class DiaryClassifiers():
                 self.compound.append(sentiment_score['compound'])
 
                 count=count+1
-
-                # self.diary[self.entry_id]['entry']=x[16:-5]
-                # self.diary[self.entry_id]['word count']=wc
-                # self.diary[self.entry_id]['date']=x[:11]
-                # self.diary[self.entry_id]['start_time']=started
-                # self.diary[self.entry_id]['total_time']=tot
-                # self.diary[self.entry_id]['compound']=sentiment_score['compound']
-
-
-                # self.entry_id=self.entry_id+1
-                # self.diary[self.entry_id]={}
-        print('here')
                 
     def getSearch():
 
         input_list=["word count","start time","duration","winter","summer","spring","fall","year range"]
         input_check=0
-        print("Welcome to the LOI Sentiment Analyzer")
+        print("\nWelcome to the LOI Sentiment Analyzer")
         print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Word Count, Start Time, Duration} \n")
         while input_check == 0:
 
-            independent=input("\nPlease choose an Independent variable from the above list\n ----> ")
+            independent=input("Please choose an Independent variable from the above list\n ----> ")
 
             if independent.lower() not in input_list:
                 print("\nMispelled entry or not in list, try again")
@@ -115,9 +103,8 @@ class DiaryClassifiers():
                     else:
                         return years
 
-
         else:
-            return independent
+            return independent.lower()
         
     def setSearch(self):
 
@@ -171,34 +158,24 @@ class DiaryClassifiers():
 
         x_tick_iterator=None
         pos,neu,neg=0,0,0
-        min_val=min(x_val)
-        max_val=max(x_val)
-        #each request's specified parameters
+        #user_input=user_input.lower()
 
-
-        # elif user_input in ('winter','spring','fall','summer'):
-
-        #     fig = plt.figure(figsize=(18, 8))
-        #     ax = fig.add_subplot()
-
-        #     ax.xaxis.set_major_locator(mpl_dates.MonthLocator(interval=15))
-        #     ax.xaxis.set_major_formatter(mpl_dates.DateFormatter('%b , %d'))
-
-        #     ax.set(xlabel="%s" % user_input,
-        #             ylabel="Polarity",
-        #             title="Selected Comparison: Polarity vs %s" % user_input.capitalize(),
-        #             xlim=[min_val , max_val])
-
-        #     fig.autofmt_xdate()
-        #     plt.scatter(x_val,y_val,c='#11C600', s=35,edgecolors='k')
-        #     plt.tight_layout()
-        #     ax.grid(True)
-        #     plt.show()
-
-
-        # elif user_input == 'start time':
-        #     x_tick_iterator=range(0000,2400,160)
-
+        font1 = {'family': 'serif',
+                'color':  '#810000',
+                'weight': 'bold',
+                'size': 18,
+                }
+        font2 = {'family': 'serif',
+                'color':  '#540000',
+                'weight': 'normal',
+                'size': 12,
+                }
+        font3 = {'family': 'serif',
+                'color':  'k',
+                'weight': 'bold',
+                'size': 12,
+                }
+#each request's specified parameters
 
         if user_input in ('winter','spring','fall','summer'):
 
@@ -212,48 +189,46 @@ class DiaryClassifiers():
                     j -= 1
                 x_val[j + 1] = key
                 y_val[j+ 1] = key_y
-
-
-
-
+            
+            x_tick_iterator=x_val[::len(x_val)//15]
 
         elif len(user_input) == 9:
-            first_year=int(user_input[:4])
-            second_year=int(user_input[5:])
-        elif user_input in ('word count', 'duration'):
+
+            x_tick_iterator=x_val[::len(x_val)//15]
+
+        elif user_input == 'duration':
+            x_tick_iterator=range(0,max(x_val),len(x_val)//15)
+            user_input = "Duration (minutes)"
+
+        elif user_input == 'word count':
             x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
 
+        elif user_input == 'start time':
+            x_tick_iterator=range(0,2500,100)
 
 
-        pos_x,pos_y=[],[]
-        neu_x,neu_y=[],[]
-        neg_x,neg_y=[],[]
 
-        for i in range(0,len(y_val)):
-            if y_val[i] >= .10:
+#Plottings
+
+        for entry in range(0,len(y_val)):
+            if y_val[entry] >= .10:
                 pos+=1
-                pos_x.append(x_val[i])
-                pos_y.append(y_val[i])
-
-            elif y_val[i] < .10 and y_val[i] > -.10:
+                plt.scatter(x_val[entry],y_val[entry], c='#11C600', s=35,edgecolors='k')
+            elif y_val[entry] < .10 and y_val[entry] > -.10:
                 neu+=1
-                neu_x.append(x_val[i])
-                neu_y.append(y_val[i])
-            elif y_val[i] <= -.10:
+                plt.scatter(x_val[entry],y_val[entry], c='#EDEB22', s=35,edgecolors='k')
+            elif y_val[entry] <= -.10:
                 neg+=1
-                neg_x.append(x_val[i])
-                neg_y.append(y_val[i])
+                plt.scatter(x_val[entry],y_val[entry], c='#3A60FF', s=35,edgecolors='k')
 
-   
-        plt.scatter(x_val,y_val, c='#11C600', s=35,edgecolors='k')
-        plt.xticks(x_tick_iterator,fontsize =10,rotation = 45) # Rotates X-Axis Ticks by 45-degrees
-        plt.ylabel("Polarity")
-        plt.xlabel("%s" % user_input.capitalize())
-        plt.title("Selected Comparison: Polarity vs %s" % user_input.capitalize())
-        plt.legend(loc="best")
+        
+        plt.suptitle("          Selected Comparison: Polarity vs %s" % user_input.capitalize(), fontdict=font1)
+        plt.title("Positive: %s , Neutral: %s , Negative: %s  " % (pos,neu,neg),fontdict=font2)
+        plt.xticks(x_tick_iterator,fontsize =10,rotation = 90)
+        plt.ylabel("Polarity",fontdict=font3)
+        plt.xlabel("%s" % user_input.capitalize(),fontdict=font3)
         plt.tight_layout()
         plt.show()
-        pass
 
 def main():
 
@@ -261,9 +236,6 @@ def main():
 
     main_run.setDiary()
     main_run.setSearch()
-
-    print("me")
-
 
 if __name__=='__main__':
     main()
