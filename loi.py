@@ -4,15 +4,10 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from matplotlib import pyplot as plt
 from matplotlib import dates as mpl_dates
 
-
 sia=SentimentIntensityAnalyzer()
 
-
 #                   Needed:                 #
-# Graph
-#       fix scale for graph
-#       need legend for pos,neu,neg
-#       add a byes statistic function
+#add a bayes statistic function
 
 
 
@@ -230,11 +225,8 @@ class DiaryClassifiers():
         plt.xlabel("%s" % user_input.capitalize(),fontdict=font3)
         plt.tight_layout()
         plt.show()
-
-        
-
+    
     def bayes_prob(x_val,y_val,user_input):
-
         pass
 
 
