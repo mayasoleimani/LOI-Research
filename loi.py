@@ -10,9 +10,9 @@ sia=SentimentIntensityAnalyzer()
 
 #                   Needed:                 #
 # Graph
-#   fix scale for graph
-#   need legend for pos,neu,neg
-#   add a byes statistic function
+#       fix scale for graph
+#       need legend for pos,neu,neg
+#       add a byes statistic function
 
 
 
@@ -158,7 +158,7 @@ class DiaryClassifiers():
 
         x_tick_iterator=None
         pos,neu,neg=0,0,0
-        #user_input=user_input.lower()
+        
 
         font1 = {'family': 'serif',
                 'color':  '#810000',
@@ -175,8 +175,9 @@ class DiaryClassifiers():
                 'weight': 'bold',
                 'size': 12,
                 }
-#each request's specified parameters
-
+        
+        
+        #Specify x labeling for each Independent variable
         if user_input in ('winter','spring','fall','summer'):
 
             for i in range(1,len(x_val)):
@@ -229,6 +230,13 @@ class DiaryClassifiers():
         plt.xlabel("%s" % user_input.capitalize(),fontdict=font3)
         plt.tight_layout()
         plt.show()
+
+        
+
+    def bayes_prob(x_val,y_val,user_input):
+
+        pass
+
 
 def main():
 
