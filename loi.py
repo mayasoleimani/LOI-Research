@@ -9,8 +9,6 @@ sia=SentimentIntensityAnalyzer()
 #                   Needed:                 #
 #add a bayes statistic function
 
-
-
 class DiaryClassifiers():
 
     def __init__(self,I=[],E=[],C=[],D=[],S=[],T=[],X=[]):
