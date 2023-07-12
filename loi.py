@@ -215,6 +215,9 @@ class DiaryClassifiers():
                 neg+=1
                 plt.scatter(x_val[entry],y_val[entry], c='#3A60FF', s=35,edgecolors='k')
 
+
+        DiaryClassifiers.bayes_prob(pos,neu,neg,x_val,y_val,user_input)
+
         
         plt.suptitle("          Selected Comparison: Polarity vs %s" % user_input.capitalize(), fontdict=font1)
         plt.title("Positive: %s , Neutral: %s , Negative: %s  " % (pos,neu,neg),fontdict=font2)
@@ -223,9 +226,57 @@ class DiaryClassifiers():
         plt.xlabel("%s" % user_input.capitalize(),fontdict=font3)
         plt.tight_layout()
         plt.show()
+
+
     
-    def bayes_prob(x_val,y_val,user_input):
-        pass
+    def bayes_prob(pos,neu,neg,x_val,y_val,user_input):
+
+        print("** Have you ever thought to yourself: What are the chances i'll feel negative given it's winter time? **") 
+        print("Choose two events with the input %s ?" % user_input)
+        print("Options: Event A  is %s and Event B is {positve,neutral,negative}" % user_input)
+        print("Options: Event A is {positve,neutral,negative} and Event B  is %s" % user_input)
+
+        event_a=input("Event A: ")
+        event_b=input("Event B: ")
+        my_self=DiaryClassifiers()
+        prob_a_b=None
+        total_of_input=len(x_val)
+        total_in_total=len(my_self.compound)
+        pos_t,neu_t,neg_t=0,0,0
+
+        for x in range(0,len(my_self.compound)):
+            if my_self.compound[x] >= -.10:
+                pos_t+=1
+            elif my_self.compound[x] < .10 and my_self.compound[x] > -.10:
+                neu_t+=1
+            elif my_self.compound[x] <= -.10:
+                neg_t+=1
+
+    
+#SEASONS / TIME
+        if user_input in ('winter','summer','spring', 'fall') or len(user_input) == 9:
+
+
+            if event_a in ('positive','negative','neutral'):
+
+                event_a=locals()[event_a[:3]]
+
+                prob_a_b=event_a/total_of_input
+
+                print(prob_a_b)
+
+            else:
+                event_b=locals()[event_b[:3]]
+
+                prob_a_b=((total_of_input/total_in_total)(event_b/total_of_input)/(event_b/total_of_input))
+
+
+
+# NUMERIC
+        else:
+
+
+            pass
 
 
 def main():
@@ -234,6 +285,7 @@ def main():
 
     main_run.setDiary()
     main_run.setSearch()
+
 
 if __name__=='__main__':
     main()
