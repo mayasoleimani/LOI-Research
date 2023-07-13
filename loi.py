@@ -1,8 +1,6 @@
-import numpy as np
 import datetime
 from nltk.sentiment import SentimentIntensityAnalyzer
 from matplotlib import pyplot as plt
-from matplotlib import dates as mpl_dates
 
 sia=SentimentIntensityAnalyzer()
 
