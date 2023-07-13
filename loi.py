@@ -216,7 +216,7 @@ class DiaryClassifiers():
                 plt.scatter(x_val[entry],y_val[entry], c='#3A60FF', s=35,edgecolors='k')
 
 
-        #DiaryClassifiers.bayes_prob(pos,neu,neg,x_val,y_val,user_input)
+        DiaryClassifiers.bayes_prob(pos,neu,neg,x_val,y_val,user_input)
 
         
         plt.suptitle("          Selected Comparison: Polarity vs %s" % user_input.capitalize(), fontdict=font1)
@@ -240,11 +240,10 @@ class DiaryClassifiers():
         event_b=input("Event B: ")
         my_self=DiaryClassifiers()
         total_of_input=len(x_val)
-        total_in_total=len(my_self.compound)
         pos_t,neu_t,neg_t=0,0,0
 
         for x in range(0,len(my_self.compound)):
-            if my_self.compound[x] >= -.10:
+            if my_self.compound[x] >= .10:
                 pos_t+=1
             elif my_self.compound[x] < .10 and my_self.compound[x] > -.10:
                 neu_t+=1
@@ -263,23 +262,58 @@ class DiaryClassifiers():
             else:
                 b_num=locals()[event_b[:3]]
                 b_num_tot=locals()[event_b[:3] + "_t"]
-                prob_a_b=((total_of_input/total_in_total)*(b_num/total_of_input)/(b_num_tot/total_in_total))
+                prob_a_b=(b_num/b_num_tot)
 
 # NUMERIC
         else:
             # " if start time < 1400"
-            for x in range(0,len(x_val)):
+            # " if word count > 30"
+            # " if duration <  40 "
+            pos_temp,neu_temp,neg_temp=0,0,0
+            temp_y_val=[]
 
 
+            def process_event(event,pos_temp,neu_temp,neg_temp):
+                event = event.split()
+                event.pop(0)
+
+                for i in range(len(x_val)):
+                    event.insert(0, str(x_val[i]))
+                    event = ' '.join(event)
+                    
+                    if eval(event):
+                        temp_y_val.append(y_val[i])
+
+                        if y_val[i] >= 0.10:
+                            pos_temp += 1
+                        elif -0.10 < y_val[i] < 0.10:
+                            neu_temp += 1
+                        elif y_val[i] <= -0.10:
+                            neg_temp += 1
+                        
+                        event = event.split()
+                        event.pop(0)
+                    else:
+                        event = event.split()
+                        event.pop(0)
+                return pos_temp,neu_temp,neg_temp
+
+            if event_a not in ('positive', 'negative', 'neutral'):
+                pos_temp,neu_temp,neg_temp=process_event(event_a,pos_temp,neu_temp,neg_temp)
+            else:
+                pos_temp,neu_temp,neg_temp=process_event(event_b,pos_temp,neu_temp,neg_temp)
 
 
-                pass
 
             if event_a in ('positive','negative','neutral'):
-                pass
 
-
-
+                a_num=locals()[event_a[:3]+ "_temp"]
+                prob_a_b=a_num/len(temp_y_val)
+            
+            else:
+                b_num=locals()[event_b[:3] + "_temp"]
+                b_num_tot=locals()[event_b[:3]]
+                prob_a_b=b_num/b_num_tot
 
 
         prob_a_b*=100
