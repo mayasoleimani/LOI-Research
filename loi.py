@@ -6,8 +6,7 @@ from matplotlib import dates as mpl_dates
 
 sia=SentimentIntensityAnalyzer()
 
-#                   Needed:                 #
-#add a bayes statistic function
+
 
 class DiaryClassifiers():
 
