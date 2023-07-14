@@ -69,10 +69,10 @@ class DiaryClassifiers():
                 
     def getSearch():
 
-        input_list=["word count","start time","duration","winter","summer","spring","fall","year range"]
+        input_list=["words","started","duration","winter","summer","spring","fall","year range"]
         input_check=0
         print("\nWelcome to the LOI Sentiment Analyzer")
-        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Word Count, Start Time, Duration} \n")
+        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Words, Started, Duration} \n")
         while input_check == 0:
 
             independent=input("Please choose an Independent variable from the above list\n ----> ")
@@ -86,7 +86,7 @@ class DiaryClassifiers():
         if independent.lower() == ("year range"):
             while input_check ==1:
                 
-                    years=input("Please select a range of years in {2012-2022}\n ex: '2014-2016' OR '2016-2017' OR '2012-2022'\n ----> ")
+                    years=input("\nPlease select a range of years in {2012-2022}\n ex: '2014-2016' OR '2017-2017' OR '2012-2022'\n ----> ")
                     if (int(years[:4]) or int(years[5:])) not in range(2012,2023):
                         print("\nMispelled entry or not in list, try again\n")
                         input_check == 1
@@ -104,11 +104,11 @@ class DiaryClassifiers():
         
         for x in range(0,len(self.compound)):
 
-            if input1 == "word count":
+            if input1 == "words":
                 x_val.append(self.word_count[x])
                 y_val.append(self.compound[x])
              
-            elif input1 == "start time" and self.start_time[x] != '0000':
+            elif input1 == "started" and self.start_time[x] != '0000':
                 x_val.append(int(self.start_time[x]))
                 y_val.append(self.compound[x])
 
@@ -147,8 +147,9 @@ class DiaryClassifiers():
     def visual(x_val,y_val,user_input):
 
         x_tick_iterator=None
+        x_label=''
         pos,neu,neg=0,0,0
-        
+        user_input=user_input.capitalize()
 
         font1 = {'family': 'serif',
                 'color':  '#810000',
@@ -167,9 +168,9 @@ class DiaryClassifiers():
                 }
         
         
-        #Specify x labeling for each Independent variable
-        if user_input in ('winter','spring','fall','summer'):
-
+#SPECIFY UNIQUE FACTORS FOR X'S
+        if user_input in ('Winter','Spring','Fall','Summer'):
+#           Insertion sort
             for i in range(1,len(x_val)):
                 key = x_val[i]
                 key_y=y_val[i]
@@ -180,27 +181,22 @@ class DiaryClassifiers():
                     j -= 1
                 x_val[j + 1] = key
                 y_val[j+ 1] = key_y
-            
             x_tick_iterator=x_val[::len(x_val)//15]
-
+            x_label="Dates in %s" % user_input
         elif len(user_input) == 9:
-
-            x_tick_iterator=x_val[::len(x_val)//15]
-
-        elif user_input == 'duration':
+            x_tick_iterator=x_val[::len(x_val)//10]
+            x_label="Number of Entries in %s" % user_input
+        elif user_input == 'Duration':
             x_tick_iterator=range(0,max(x_val),len(x_val)//15)
-            user_input = "Duration (minutes)"
-
-        elif user_input == 'word count':
+            x_label = "Duration (minutes)"
+        elif user_input == 'Words':
             x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
-
-        elif user_input == 'start time':
+            x_label="Word Count in an Entry"
+        elif user_input == 'Started':
             x_tick_iterator=range(0,2500,100)
+            x_label="Time Started (Military)"
 
-
-
-#Plottings
-
+#PLOTTINGS
         for entry in range(0,len(y_val)):
             if y_val[entry] >= .10:
                 pos+=1
@@ -212,26 +208,31 @@ class DiaryClassifiers():
                 neg+=1
                 plt.scatter(x_val[entry],y_val[entry], c='#3A60FF', s=35,edgecolors='k')
 
-
         DiaryClassifiers.bayes_prob(pos,neu,neg,x_val,y_val,user_input)
 
-        
-        plt.suptitle("          Selected Comparison: Polarity vs %s" % user_input.capitalize(), fontdict=font1)
+        plt.suptitle("          Selected Comparison: Polarity vs %s" % user_input, fontdict=font1)
         plt.title("Positive: %s , Neutral: %s , Negative: %s  " % (pos,neu,neg),fontdict=font2)
         plt.xticks(x_tick_iterator,fontsize =10,rotation = 90)
         plt.ylabel("Polarity",fontdict=font3)
-        plt.xlabel("%s" % user_input.capitalize(),fontdict=font3)
+        plt.xlabel("%s" % x_label,fontdict=font3)
         plt.tight_layout()
         plt.show()
 
-
-    
     def bayes_prob(pos,neu,neg,x_val,y_val,user_input):
+        
+        my_min=min(x_val)
+        my_max=max(x_val)
 
-        print("\n** Have you ever thought to yourself, perhaps 'What are the chances I'll feel negative given it's winter time?' **") 
-        print("Choose two events with the input: %s " % user_input)
-        print("Options: Event A  is %s and Event B is {positve,neutral,negative}" % user_input)
-        print("Options: Event A is {positve,neutral,negative} and Event B  is %s" % user_input)
+
+        print("\n*** Have you ever thought to yourself, perhaps 'What are the chances I'll feel negative given it's winter time?' ***\n") 
+        print("Choose two events with the input: %s\n " % user_input)
+
+        if user_input in ('Words','Started','Duration'):
+            print("Option 1: Event A  is %s { < , > } {%s - %s} and Event B is {positve,neutral,negative}" % (user_input, my_min, my_max))
+            print("Option 2: Event A is {positve,neutral,negative} and Event B  is %s { < , > } {%s - %s}\n" % (user_input, my_min, my_max))
+        else:
+            print("Option 1: Event A  is %s and Event B is {positve,neutral,negative}" % user_input)
+            print("Option 2: Event A is {positve,neutral,negative} and Event B  is %s\n" % user_input)
 
         event_a=input("Event A: ")
         event_b=input("Event B: ")
@@ -239,6 +240,7 @@ class DiaryClassifiers():
         total_of_input=len(x_val)
         pos_t,neu_t,neg_t=0,0,0
 
+#STORING SCORE TOTALS
         for x in range(0,len(my_self.compound)):
             if my_self.compound[x] >= .10:
                 pos_t+=1
@@ -247,15 +249,11 @@ class DiaryClassifiers():
             elif my_self.compound[x] <= -.10:
                 neg_t+=1
 
-    
 # SEASONS / TIME
-        if user_input in ('winter','summer','spring', 'fall') or len(user_input) == 9:
-
+        if user_input in ('Winter','Summer','Spring','Fall') or len(user_input) == 9:
             if event_a in ('positive','negative','neutral'):
-
                 a_num=locals()[event_a[:3]]
                 prob_a_b=a_num/total_of_input
-
             else:
                 b_num=locals()[event_b[:3]]
                 b_num_tot=locals()[event_b[:3] + "_t"]
@@ -263,12 +261,11 @@ class DiaryClassifiers():
 
 # NUMERIC
         else:
-            # " if start time < 1400"
-            # " if word count > 30"
-            # " if duration <  40 "
+            # " if started < 1400"
+            # " if words > 30"
+            # " if duration <  40"
             pos_temp,neu_temp,neg_temp=0,0,0
             temp_y_val=[]
-
 
             def process_event(event,pos_temp,neu_temp,neg_temp):
                 event = event.split()
@@ -300,8 +297,6 @@ class DiaryClassifiers():
             else:
                 pos_temp,neu_temp,neg_temp=process_event(event_b,pos_temp,neu_temp,neg_temp)
 
-
-
             if event_a in ('positive','negative','neutral'):
 
                 a_num=locals()[event_a[:3]+ "_temp"]
@@ -312,19 +307,14 @@ class DiaryClassifiers():
                 b_num_tot=locals()[event_b[:3]]
                 prob_a_b=b_num/b_num_tot
 
-
         prob_a_b*=100
-        print("\n P( %s | %s ) = %f %% \n" % (event_a, event_b, prob_a_b))
-
-
+        print("\n P ( %s | %s ) = %f %% \n" % (event_a, event_b, prob_a_b))
 
 def main():
 
     main_run=DiaryClassifiers()
-
     main_run.setDiary()
     main_run.setSearch()
-
 
 if __name__=='__main__':
     main()
