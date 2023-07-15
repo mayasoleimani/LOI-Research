@@ -1,9 +1,9 @@
 import datetime
 from nltk.sentiment import SentimentIntensityAnalyzer
 from matplotlib import pyplot as plt
+from textblob import TextBlob
 
 sia=SentimentIntensityAnalyzer()
-
 
 
 class DiaryClassifiers():
@@ -16,16 +16,6 @@ class DiaryClassifiers():
         self.start_time=S
         self.total_time=T
         self.compound=X
-        # self.diary={self.entry_id:
-        #             {
-        #             'entry':self.entry,
-        #             'word count':self.word_count,
-        #             'date':self.date,
-        #             'start_time':self.start_time,
-        #             'total time':self.total_time,
-        #             'compound':self.compound
-        #             }
-        #             }   
 
     def setDiary(self):
 
@@ -54,16 +44,17 @@ class DiaryClassifiers():
                 else:
                     tot='5555'
 
-                
-                sentiment_score=sia.polarity_scores(entry)
-                
+                #sentiment_score=sia.polarity_scores(entry)
+                sentiment_score=TextBlob(entry).sentiment.polarity
+
                 self.entry_id.append(count+1)
                 self.entry.append(x[16:-5])
                 self.word_count.append(wc)
                 self.date.append(x[:10])
                 self.start_time.append(started)
                 self.total_time.append(tot)
-                self.compound.append(sentiment_score['compound'])
+                #self.compound.append(sentiment_score['compound'])
+                self.compound.append(sentiment_score)
 
                 count=count+1
                 
@@ -223,7 +214,6 @@ class DiaryClassifiers():
         my_min=min(x_val)
         my_max=max(x_val)
 
-
         print("\n*** Have you ever thought to yourself, perhaps 'What are the chances I'll feel negative given it's winter time?' ***\n") 
         print("Choose two events with the input: %s\n " % user_input)
 
@@ -236,18 +226,12 @@ class DiaryClassifiers():
 
         event_a=input("Event A: ")
         event_b=input("Event B: ")
-        my_self=DiaryClassifiers()
+        all_scores=DiaryClassifiers().compound
         total_of_input=len(x_val)
-        pos_t,neu_t,neg_t=0,0,0
+        pos_t = sum(1 for score in all_scores if score >= 0.10)
+        neu_t = sum(1 for score in all_scores if -0.10 < score < 0.10)
+        neg_t = sum(1 for score in all_scores if score <= -0.10)
 
-#STORING SCORE TOTALS
-        for x in range(0,len(my_self.compound)):
-            if my_self.compound[x] >= .10:
-                pos_t+=1
-            elif my_self.compound[x] < .10 and my_self.compound[x] > -.10:
-                neu_t+=1
-            elif my_self.compound[x] <= -.10:
-                neg_t+=1
 
 # SEASONS / TIME
         if user_input in ('Winter','Summer','Spring','Fall') or len(user_input) == 9:
@@ -268,6 +252,7 @@ class DiaryClassifiers():
             temp_y_val=[]
 
             def process_event(event,pos_temp,neu_temp,neg_temp):
+                #user condition
                 event = event.split()
                 event.pop(0)
 
@@ -298,7 +283,6 @@ class DiaryClassifiers():
                 pos_temp,neu_temp,neg_temp=process_event(event_b,pos_temp,neu_temp,neg_temp)
 
             if event_a in ('positive','negative','neutral'):
-
                 a_num=locals()[event_a[:3]+ "_temp"]
                 prob_a_b=a_num/len(temp_y_val)
             
