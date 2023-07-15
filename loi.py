@@ -1,9 +1,7 @@
 import datetime
-from nltk.sentiment import SentimentIntensityAnalyzer
 from matplotlib import pyplot as plt
-from textblob import TextBlob
-
-sia=SentimentIntensityAnalyzer()
+from nltk.sentiment import SentimentIntensityAnalyzer
+#from textblob import TextBlob
 
 
 class DiaryClassifiers():
@@ -19,6 +17,7 @@ class DiaryClassifiers():
 
     def setDiary(self):
 
+        sia=SentimentIntensityAnalyzer()
         count=-1
 
         with open("/Users/Hp/OneDrive/UMD/Summer 2023/ENGR_492/TextCorpus/grand_diary.txt") as grandjournal:
@@ -44,8 +43,8 @@ class DiaryClassifiers():
                 else:
                     tot='5555'
 
-                #sentiment_score=sia.polarity_scores(entry)
-                sentiment_score=TextBlob(entry).sentiment.polarity
+                sentiment_score=sia.polarity_scores(entry)
+                #sentiment_score=TextBlob(entry).sentiment.polarity
 
                 self.entry_id.append(count+1)
                 self.entry.append(x[16:-5])
@@ -53,8 +52,8 @@ class DiaryClassifiers():
                 self.date.append(x[:10])
                 self.start_time.append(started)
                 self.total_time.append(tot)
-                #self.compound.append(sentiment_score['compound'])
-                self.compound.append(sentiment_score)
+                self.compound.append(sentiment_score['compound'])
+                #self.compound.append(sentiment_score)
 
                 count=count+1
                 
