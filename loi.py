@@ -171,13 +171,13 @@ class DiaryClassifiers():
             x_label="Dates in %s" % user_input
         elif len(user_input) == 9:
             x_tick_iterator=x_val[::len(x_val)//10]
-            x_label="Number of Entries in %s" % user_input
+            x_label="Entries in %s" % user_input
         elif user_input == 'Duration':
             x_tick_iterator=range(0,max(x_val),len(x_val)//15)
             x_label = "Duration (minutes)"
         elif user_input == 'Words':
             x_tick_iterator=range(min(x_val),max(x_val),(max(x_val)-min(x_val))//15)
-            x_label="Word Count in an Entry"
+            x_label="Word Count in Entries"
         elif user_input == 'Started':
             x_tick_iterator=range(0,2500,100)
             x_label="Time Started (Military)"
@@ -213,14 +213,14 @@ class DiaryClassifiers():
         print("Choose two events involving your input: %s\n " % user_input)
 
         if user_input in ('Words','Started','Duration'):
-            print("Option 1: Event A  is %s { < , > } {%s - %s} and Event B is {positve,neutral,negative}" % (user_input, my_min, my_max))
-            print("Option 2: Event A is {positve,neutral,negative} and Event B  is %s { < , > } {%s - %s}\n" % (user_input, my_min, my_max))
+            print("Option 1 -> Event A  = %s { < , > } {%s - %s} and Event B = {positve, neutral, negative}" % (user_input, my_min, my_max))
+            print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s { < , > } {%s - %s}\n" % (user_input, my_min, my_max))
         else:
-            print("Option 1: Event A  is %s and Event B is {positve,neutral,negative}" % user_input)
-            print("Option 2: Event A is {positve,neutral,negative} and Event B  is %s\n" % user_input)
+            print("Option 1 -> Event A = %s and Event B = {positve, neutral, negative}" % user_input)
+            print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s\n" % user_input)
 
-        event_a=input("Event A: ")
-        event_b=input("Event B: ")
+        event_a=input("Event A = ").lower()
+        event_b=input("Event B = ").lower()
         all_scores=DiaryClassifiers().compound
         total_of_input=len(x_val)
         pos_t = sum(1 for score in all_scores if score >= 0.10)
@@ -234,8 +234,8 @@ class DiaryClassifiers():
                 a_num=locals()[event_a[:3]]
                 prob_a_b=a_num/total_of_input
             else:
-                b_num=locals()[event_b[:3].lower()]
-                b_num_tot=locals()[(event_b[:3] + "_t").lower()]
+                b_num=locals()[event_b[:3]]
+                b_num_tot=locals()[(event_b[:3] + "_t")]
                 prob_a_b=(b_num/b_num_tot)
 
 # NUMERIC
