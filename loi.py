@@ -1,8 +1,6 @@
 import datetime
 from matplotlib import pyplot as plt
 from nltk.sentiment import SentimentIntensityAnalyzer
-#from textblob import TextBlob
-
 
 class DiaryClassifiers():
 
@@ -44,16 +42,14 @@ class DiaryClassifiers():
                     tot='5555'
 
                 sentiment_score=sia.polarity_scores(entry)
-                #sentiment_score=TextBlob(entry).sentiment.polarity
 
                 self.entry_id.append(count+1)
-                self.entry.append(x[16:-5])
+                self.entry.append(x[16:-6])
                 self.word_count.append(wc)
                 self.date.append(x[:10])
                 self.start_time.append(started)
                 self.total_time.append(tot)
                 self.compound.append(sentiment_score['compound'])
-                #self.compound.append(sentiment_score)
 
                 count=count+1
                 
@@ -293,11 +289,47 @@ class DiaryClassifiers():
         prob_a_b*=100
         print("\n P ( %s | %s ) = %f %% \n" % (event_a, event_b, prob_a_b))
 
+    def accuracy(self):
+
+        with open('test.txt', 'r') as test_data:
+            nltk_score=[]
+            test_score=[]
+            correct=0
+            total=len(test_score)
+            for x in test_data:
+                x=x.split(' ')
+                polarity_label = x[0]
+                rest_of_words = ' '.join(x[1:])
+
+                for y in range(0,len(self.entry)):
+
+                    if self.entry[y] == rest_of_words.replace("\n",''):
+                        if self.compound[y] >= 0.10:
+                            score="positive"
+                        elif -0.10 < self.compound[y] < 0.10:
+                            score="neutral"
+                        elif self.compound[y] <= -0.10:
+                            score ="negative"
+                        print(self.entry[y])
+                        print(rest_of_words)
+                        nltk_score.append(score)
+                        test_score.append(polarity_label)
+                        break
+
+            for x in range(len(nltk_score)):
+                if nltk_score[x] == test_score[x]:
+                    correct+=1
+
+            total=len(test_score)
+            accuracy=100 * correct/total
+            print("Sentiment Accuracy: %f %%" % accuracy)
+
 def main():
 
     main_run=DiaryClassifiers()
     main_run.setDiary()
     main_run.setSearch()
+    main_run.accuracy()
 
 if __name__=='__main__':
     main()
