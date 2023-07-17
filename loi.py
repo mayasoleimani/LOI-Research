@@ -58,7 +58,7 @@ class DiaryClassifiers():
         input_list=["words","started","duration","winter","summer","spring","fall","year range"]
         input_check=0
         print("\nWelcome to the LOI Sentiment Analyzer")
-        print("\n {Year range, Season {'Winter', 'Summer', 'Spring', 'Fall'}, Words, Started, Duration} \n")
+        print("\n {Year range, A Season {'Winter', 'Summer', 'Spring', 'Fall'}, Words, Started, Duration} \n")
         while input_check == 0:
 
             independent=input("Please choose an Independent variable from the above list\n ----> ")
@@ -210,7 +210,7 @@ class DiaryClassifiers():
         my_max=max(x_val)
 
         print("\n*** Have you ever thought to yourself, perhaps 'What are the chances I'll feel negative given it's winter time?' ***\n") 
-        print("Choose two events with the input: %s\n " % user_input)
+        print("Choose two events involving your input: %s\n " % user_input)
 
         if user_input in ('Words','Started','Duration'):
             print("Option 1: Event A  is %s { < , > } {%s - %s} and Event B is {positve,neutral,negative}" % (user_input, my_min, my_max))
@@ -234,8 +234,8 @@ class DiaryClassifiers():
                 a_num=locals()[event_a[:3]]
                 prob_a_b=a_num/total_of_input
             else:
-                b_num=locals()[event_b[:3]]
-                b_num_tot=locals()[event_b[:3] + "_t"]
+                b_num=locals()[event_b[:3].lower()]
+                b_num_tot=locals()[(event_b[:3] + "_t").lower()]
                 prob_a_b=(b_num/b_num_tot)
 
 # NUMERIC
@@ -287,7 +287,7 @@ class DiaryClassifiers():
                 prob_a_b=b_num/b_num_tot
 
         prob_a_b*=100
-        print("\n P ( %s | %s ) = %f %% \n" % (event_a, event_b, prob_a_b))
+        print("\n P ( %s | %s ) = %.2f %% \n" % (event_a, event_b, prob_a_b))
 
     def accuracy(self):
 
@@ -310,8 +310,6 @@ class DiaryClassifiers():
                             score="neutral"
                         elif self.compound[y] <= -0.10:
                             score ="negative"
-                        print(self.entry[y])
-                        print(rest_of_words)
                         nltk_score.append(score)
                         test_score.append(polarity_label)
                         break
@@ -322,7 +320,7 @@ class DiaryClassifiers():
 
             total=len(test_score)
             accuracy=100 * correct/total
-            print("Sentiment Accuracy: %f %%" % accuracy)
+            #print("Sentiment Accuracy: %f %%" % accuracy)
 
 def main():
 
