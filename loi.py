@@ -328,7 +328,5 @@ def main():
     main_run.setSearch()
     main_run.accuracy()
 
-
-
 if __name__=='__main__':
     main()
