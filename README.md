@@ -1,6 +1,6 @@
 # 📖 Life of Introspection - Personal NLP Research Project 📖
-## Maya Soleimani
-### Summer I&II     -     University of Michigan - Dearborn
+## By: Maya Soleimani
+### Summer I&II     -     University of Michigan - Dearborn    -    Professor Maxim
 
 # 
 
