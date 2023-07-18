@@ -17,7 +17,7 @@ class DiaryClassifiers():
 
         sia=SentimentIntensityAnalyzer()
         count=-1
-
+#                 [----------------------Put your own directory here---------------------]
         with open("/Users/Hp/OneDrive/UMD/Summer 2023/ENGR_492/TextCorpus/grand_diary.txt") as grandjournal:
             
             for x in grandjournal:
@@ -154,7 +154,7 @@ class DiaryClassifiers():
                 }
         
         
-#SPECIFY UNIQUE FACTORS FOR X'S
+#       SPECIFY UNIQUE FACTORS FOR X'S
         if user_input in ('Winter','Spring','Fall','Summer'):
 #           Insertion sort
             for i in range(1,len(x_val)):
@@ -206,8 +206,13 @@ class DiaryClassifiers():
 
     def bayes_prob(pos,neu,neg,x_val,y_val,user_input):
         
+        all_scores=DiaryClassifiers().compound
+        total_of_input=len(x_val)
         my_min=min(x_val)
         my_max=max(x_val)
+        pos_t = sum(1 for score in all_scores if score >= 0.10)
+        neu_t = sum(1 for score in all_scores if -0.10 < score < 0.10)
+        neg_t = sum(1 for score in all_scores if score <= -0.10)
 
         print("\n*** Have you ever thought to yourself, perhaps 'What are the chances I'll feel negative given it's winter time?' ***\n") 
         print("Choose two events involving your input: %s\n " % user_input)
@@ -218,14 +223,11 @@ class DiaryClassifiers():
         else:
             print("Option 1 -> Event A = %s and Event B = {positve, neutral, negative}" % user_input)
             print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s\n" % user_input)
-
+        
         event_a=input("Event A = ").lower()
         event_b=input("Event B = ").lower()
-        all_scores=DiaryClassifiers().compound
-        total_of_input=len(x_val)
-        pos_t = sum(1 for score in all_scores if score >= 0.10)
-        neu_t = sum(1 for score in all_scores if -0.10 < score < 0.10)
-        neg_t = sum(1 for score in all_scores if score <= -0.10)
+
+        
 
 
 # SEASONS / TIME
@@ -240,9 +242,6 @@ class DiaryClassifiers():
 
 # NUMERIC
         else:
-            # " if started < 1400"
-            # " if words > 30"
-            # " if duration <  40"
             pos_temp,neu_temp,neg_temp=0,0,0
             temp_y_val=[]
 
@@ -328,6 +327,8 @@ def main():
     main_run.setDiary()
     main_run.setSearch()
     main_run.accuracy()
+
+
 
 if __name__=='__main__':
     main()
