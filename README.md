@@ -5,17 +5,23 @@
 # 
 
 ### This project parses through 300 diary entries in a 10 year range, capable of different statistics of your choosing of emotional polarity vs. specified independent variables.
-#### Written in *Python*
+#
+### Requirements:
+#
+#### + Written in *Python*
 #### Libraries used: 
-#### * import datetime
-#### * from matplotlib import pyplot as plt
-#### * from nltk.sentiment import SentimentIntensityAnalyzer
+#### + import datetime
+#### + from matplotlib import pyplot as plt
+#### + from nltk.sentiment import SentimentIntensityAnalyzer
 #### Files Needed:
-#### * .txt file with your entries where each line follows this format: 
+#### + loi.py
+#### + .txt file with your entries where each line follows this format: 
 ####    “05/17/2014 1853 Today was such a bad day, and I’m just not feeling well overall. For some reason, it’s been so hard to wake up in the morning. 1906”
 #### (date, start time, entry, end time)
+#### + .txt with manually labeled polarity score with entry to test accuracy. Amount of lines should be a decent chunk of original entries, in this project I used approximately 1/10th of original data. The format of this file follows this format:
+#### "negative Today was such a bad day, and I’m just not feeling well overall. For some reason, it’s been so hard to wake up in the morning."
 
-# Instructions
+## Instructions:
 
 <img width="600" alt="image" src="https://github.com/mayasoleimani/LOI-Research/assets/82066258/9843c3b3-c521-4c50-964e-33180f43f9b7">
 
@@ -52,6 +58,6 @@
 
 #
 
-### Known test case errors:
+### Current known errors:
 #####
 ##### * In second I/O request from user (Bayes functionality), no error checking for user input ('Event A= ' & 'Event B= ')
