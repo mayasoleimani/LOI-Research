@@ -223,9 +223,34 @@ class DiaryClassifiers():
         else:
             print("Option 1 -> Event A = %s and Event B = {positve, neutral, negative}" % user_input)
             print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s\n" % user_input)
-        
-        event_a=input("Event A = ").lower()
-        event_b=input("Event B = ").lower()
+#       Error check input #2
+        user_input=user_input.lower()
+        error_check=0
+        while error_check==0:
+
+            event_a=input("Event A = ").lower()
+            event_b=input("Event B = ").lower()
+
+            a=event_a.split()
+            b=event_b.split()
+            my_tuple=('positive','negative','neutral')
+            if (event_a in my_tuple or event_b in my_tuple) and (a[0] == user_input or b[0] == user_input):
+                if len(a) == 1 and len(b) == 1:
+                    error_check+=1
+                else:
+                    if len(a) == 3:
+                        if int(a[2]) not in range(my_min,my_max+1):
+                            print("\nEvent A out of range, try again\n")
+                        else:
+                            error_check+=1
+                    else:
+                        if int(b[2]) not in range(my_min,my_max+1):
+                            print("\nEvent B out of range, try again\n")
+                        else:
+                            error_check+=1
+                        
+            else:
+                print("\nMispelled entry or not the input %s, try again\n" % user_input)
 
         
 
