@@ -59,5 +59,4 @@
 #
 
 ### Current known errors:
-#####
-##### * In second I/O request from user (Bayes functionality), no error checking for user input ('Event A= ' & 'Event B= ')
+##### N/A
