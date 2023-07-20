@@ -71,13 +71,22 @@ class DiaryClassifiers():
 
         if independent.lower() == ("year range"):
             while input_check ==1:
-                
+
                     years=input("\nPlease select a range of years in {2012-2022}\n ex: '2014-2016' OR '2017-2017' OR '2012-2022'\n ----> ")
-                    if (int(years[:4]) or int(years[5:])) not in range(2012,2023):
-                        print("\nMispelled entry or not in list, try again\n")
+                    firstyear=years[:4]
+                    secondyear=years[5:]
+                    try:
+                        if (int(firstyear) and int(secondyear) not in range(2012,2023)) or len(years)!=9 or secondyear<firstyear:
+                                print("\nMispelled entry or not in list, try again\n")
+                                input_check == 1
+                        else:
+                            return years
+            
+                    except ValueError:
                         input_check == 1
-                    else:
-                        return years
+                        print("\nRange mispelled, try again\n")
+
+        
 
         else:
             return independent.lower()
@@ -220,43 +229,49 @@ class DiaryClassifiers():
         if user_input in ('Words','Started','Duration'):
             print("Option 1 -> Event A  = %s { < , > } {%s - %s} and Event B = {positve, neutral, negative}" % (user_input, my_min, my_max))
             print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s { < , > } {%s - %s}\n" % (user_input, my_min, my_max))
+            print("Ex: Event A = Positive \n    Event B = %s < %s \n" % (user_input,my_max/2))
         else:
             print("Option 1 -> Event A = %s and Event B = {positve, neutral, negative}" % user_input)
             print("Option 2 -> Event A = {positve, neutral, negative} and Event B  = %s\n" % user_input)
+            print("Ex: Event A = Positive\n    Event B = %s \n" % user_input)
 #       Error check input #2
         user_input=user_input.lower()
         error_check=0
         while error_check==0:
 
-            event_a=input("Event A = ").lower()
-            event_b=input("Event B = ").lower()
+            event_a=input("Event A = ").lower().strip()
+            event_b=input("Event B = ").lower().strip()
 
             a=event_a.split()
             b=event_b.split()
             my_tuple=('positive','negative','neutral')
+            other_tuple=('words','duration','started')
             if (event_a in my_tuple or event_b in my_tuple) and (a[0] == user_input or b[0] == user_input):
-                if len(a) == 1 and len(b) == 1:
-                    error_check+=1
-                else:
+                if (len(a) == 1 and len(b) == 1) and (a[0] not in other_tuple and b[0] not in other_tuple):
+                        error_check+=1
+                elif len(a)==3 or len(b)==3:
                     if len(a) == 3:
-                        if int(a[2]) not in range(my_min,my_max+1):
+                        if my_min < float(a[2]) < my_max+1:
+                            error_check+=1
+                        else:
                             print("\nEvent A out of range, try again\n")
-                        else:
-                            error_check+=1
                     else:
-                        if int(b[2]) not in range(my_min,my_max+1):
-                            print("\nEvent B out of range, try again\n")
-                        else:
+                        if my_min < float(b[2]) < my_max+1:
                             error_check+=1
+                        else:
+                            print("\nEvent B out of range, try again\n")
+                else:
+                    print("\nFormat incorrect, try again\n")
+
                         
             else:
-                print("\nMispelled entry or not the input %s, try again\n" % user_input)
+                print("\nFormat incorrrect or not the input %s, try again\n" % user_input)
 
         
 
 
 # SEASONS / TIME
-        if user_input in ('Winter','Summer','Spring','Fall') or len(user_input) == 9:
+        if user_input in ('winter','summer','spring','fall') or len(user_input) == 9:
             if event_a in ('positive','negative','neutral'):
                 a_num=locals()[event_a[:3]]
                 prob_a_b=a_num/total_of_input
