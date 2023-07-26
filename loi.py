@@ -333,13 +333,9 @@ class DiaryClassifiers():
         with open('test.txt', 'r') as test_data:
             pred_score=[]
             actual_score=[]
-            FP_pos,FP_neu,FP_neg=0,0,0
-            FN_pos,FN_neu,FN_neg=0,0,0
-            TP_pos,TP_neu,TP_neg=0,0,0
-            pos,neu,neg=0,0,0
-
             total=len(actual_score)
             correct=0
+
             for x in test_data:
                 x=x.split(' ')
                 polarity_label = x[0]
@@ -350,81 +346,79 @@ class DiaryClassifiers():
                     if self.entry[y] == rest_of_words.replace("\n",''):
                         if self.compound[y] >= 0.10:
                             score="positive"
-                            pos+=1
                         elif -0.10 < self.compound[y] < 0.10:
                             score="neutral"
-                            neu+=1
                         elif self.compound[y] <= -0.10:
                             score ="negative"
-                            neg+=1
                         pred_score.append(score)
                         actual_score.append(polarity_label)
                         break
-
-
             for x in range(len(pred_score)):
                 if pred_score[x] == actual_score[x]:
                     correct+=1
-                    if pred_score[x] =='positive':
-                        TP_pos+=1
-                    elif pred_score[x] =='neutral':
-                        TP_neu+=1
-                    elif pred_score[x] =='negative':
-                        TP_neg+=1
-                else:
-                    if pred_score[x] =='positive' and actual_score[x] != 'positive':
-                        FN_pos+=1
-                    elif pred_score[x] =='neutral' and actual_score[x] != 'neutral':
-                        FN_neu+=1
-                    elif pred_score[x] =='negative' and actual_score[x] != 'negative':
-                        FN_neg+=1
-                    if actual_score[x] =='positive' and pred_score[x] != 'positive':
-                        FP_pos+=1
-                    elif actual_score[x] =='neutral' and pred_score[x] != 'neutral':
-                        FP_neu+=1
-                    elif actual_score[x] =='negative' and pred_score[x] != 'negative':
-                        FP_neg+=1
-
-
+            
             total=len(actual_score)
             accuracy=100 * correct/total
-            #print("Sentiment Accuracy: %f %%" % accuracy)
+            print("Sentiment Accuracy: %f %%" % accuracy)
 
-        DiaryClassifiers.precision(TP_pos,TP_neu,TP_neg,FP_pos,FP_neu,FP_neg)
-        DiaryClassifiers.recall(TP_pos,TP_neu,TP_neg,FN_pos,FN_neu,FN_neg)
+            return pred_score,actual_score
 
-    def precision(TP_pos,TP_neu,TP_neg,FP_pos,FP_neu,FP_neg):
+    def prec_recall(pred_score,actual_score):
+                
+        FP_pos,FP_neu,FP_neg=0,0,0
+        FN_pos,FN_neu,FN_neg=0,0,0
+        TP_pos,TP_neu,TP_neg=0,0,0
 
-        TP_tot=TP_pos+TP_neu+TP_neg
-        FP_tot=FP_pos+FP_neu+FP_neg
+        for x in range(len(pred_score)):
+            if pred_score[x] == actual_score[x]:
+                if pred_score[x] =='positive':
+                    TP_pos+=1
+                elif pred_score[x] =='neutral':
+                    TP_neu+=1
+                elif pred_score[x] =='negative':
+                    TP_neg+=1
+            else:
+                if pred_score[x] =='positive' and actual_score[x] != 'positive':
+                    FN_pos+=1
+                elif pred_score[x] =='neutral' and actual_score[x] != 'neutral':
+                    FN_neu+=1
+                elif pred_score[x] =='negative' and actual_score[x] != 'negative':
+                    FN_neg+=1
+                if actual_score[x] =='positive' and pred_score[x] != 'positive':
+                    FP_pos+=1
+                elif actual_score[x] =='neutral' and pred_score[x] != 'neutral':
+                    FP_neu+=1
+                elif actual_score[x] =='negative' and pred_score[x] != 'negative':
+                    FP_neg+=1
+
+
+                
+
+        DiaryClassifiers.precision(TP_pos,FP_pos,label="positive")
+        DiaryClassifiers.precision(TP_neu,FP_neu,label="neutral")
+        DiaryClassifiers.precision(TP_neg,FP_neg,label="negative")
+
+        DiaryClassifiers.recall(TP_pos,FN_pos,label="positive")
+        DiaryClassifiers.recall(TP_neu,FN_neu,label="neutral")
+        DiaryClassifiers.recall(TP_neg,FN_neg,label="negative")
+
+
+    def precision(TP,FP,label):
 
         try:
-            recall_1=TP_pos/(TP_pos+FP_pos)
-            recall_2=TP_neu/(TP_neu+FP_neu)
-            recall_3=TP_neg/(TP_neg+FP_neg)            
+            precision=TP/(TP+FP)
+            print(label + " Precision: " + str(precision))
         except ZeroDivisionError:
-            return "Undefined Precision"
-        
-        finally:
-            macro=TP_tot/(TP_tot+FP_tot)
-            print("Macro Precision is: %d" % macro)
+            print( "Undefined Precision (0/0) for %s " % label )
 
-    def recall(TP_pos,TP_neu,TP_neg,FN_pos,FN_neu,FN_neg):
-
-        TP_tot=TP_pos+TP_neu+TP_neg
-        FP_tot=FN_pos+FN_neu+FN_neg
+    def recall(TP,FN,label):
 
         try:
-            recall_1=TP_pos/(TP_pos+FN_pos)
-            recall_2=TP_neu/(TP_neu+FN_neu)
-            recall_3=TP_neg/(TP_neg+FN_neg)
+            recall=TP/(TP+FN)
+            print(label + " Recall: " + str(recall))
 
         except ZeroDivisionError:
-            return "Undefined Recall"
-        
-        finally:
-            macro=TP_tot/(TP_tot+FP_tot)
-            print("Macro Recall is: %d" % macro)
+            print( "Undefined Recall (0/0) for %s " % label)
 
 def main():
 
@@ -433,7 +427,8 @@ def main():
     main_run.setSearch()
 
 #   evaluation
-    #main_run.accuracy()
+    pred_score,accuracy_score=DiaryClassifiers.accuracy(main_run)
+    DiaryClassifiers.prec_recall(pred_score,accuracy_score)
 
 if __name__=='__main__':
     main()
