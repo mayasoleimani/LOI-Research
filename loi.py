@@ -331,10 +331,15 @@ class DiaryClassifiers():
     def accuracy(self):
 
         with open('test.txt', 'r') as test_data:
-            nltk_score=[]
-            test_score=[]
+            pred_score=[]
+            actual_score=[]
+            FP_pos,FP_neu,FP_neg=0,0,0
+            FN_pos,FN_neu,FN_neg=0,0,0
+            TP_pos,TP_neu,TP_neg=0,0,0
+            pos,neu,neg=0,0,0
+
+            total=len(actual_score)
             correct=0
-            total=len(test_score)
             for x in test_data:
                 x=x.split(' ')
                 polarity_label = x[0]
@@ -345,28 +350,90 @@ class DiaryClassifiers():
                     if self.entry[y] == rest_of_words.replace("\n",''):
                         if self.compound[y] >= 0.10:
                             score="positive"
+                            pos+=1
                         elif -0.10 < self.compound[y] < 0.10:
                             score="neutral"
+                            neu+=1
                         elif self.compound[y] <= -0.10:
                             score ="negative"
-                        nltk_score.append(score)
-                        test_score.append(polarity_label)
+                            neg+=1
+                        pred_score.append(score)
+                        actual_score.append(polarity_label)
                         break
 
-            for x in range(len(nltk_score)):
-                if nltk_score[x] == test_score[x]:
-                    correct+=1
 
-            total=len(test_score)
+            for x in range(len(pred_score)):
+                if pred_score[x] == actual_score[x]:
+                    correct+=1
+                    if pred_score[x] =='positive':
+                        TP_pos+=1
+                    elif pred_score[x] =='neutral':
+                        TP_neu+=1
+                    elif pred_score[x] =='negative':
+                        TP_neg+=1
+                else:
+                    if pred_score[x] =='positive' and actual_score[x] != 'positive':
+                        FN_pos+=1
+                    elif pred_score[x] =='neutral' and actual_score[x] != 'neutral':
+                        FN_neu+=1
+                    elif pred_score[x] =='negative' and actual_score[x] != 'negative':
+                        FN_neg+=1
+                    if actual_score[x] =='positive' and pred_score[x] != 'positive':
+                        FP_pos+=1
+                    elif actual_score[x] =='neutral' and pred_score[x] != 'neutral':
+                        FP_neu+=1
+                    elif actual_score[x] =='negative' and pred_score[x] != 'negative':
+                        FP_neg+=1
+
+
+            total=len(actual_score)
             accuracy=100 * correct/total
             #print("Sentiment Accuracy: %f %%" % accuracy)
+
+        DiaryClassifiers.precision(TP_pos,TP_neu,TP_neg,FP_pos,FP_neu,FP_neg)
+        DiaryClassifiers.recall(TP_pos,TP_neu,TP_neg,FN_pos,FN_neu,FN_neg)
+
+    def precision(TP_pos,TP_neu,TP_neg,FP_pos,FP_neu,FP_neg):
+
+        TP_tot=TP_pos+TP_neu+TP_neg
+        FP_tot=FP_pos+FP_neu+FP_neg
+
+        try:
+            recall_1=TP_pos/(TP_pos+FP_pos)
+            recall_2=TP_neu/(TP_neu+FP_neu)
+            recall_3=TP_neg/(TP_neg+FP_neg)            
+        except ZeroDivisionError:
+            return "Undefined Precision"
+        
+        finally:
+            macro=TP_tot/(TP_tot+FP_tot)
+            print("Macro Precision is: %d" % macro)
+
+    def recall(TP_pos,TP_neu,TP_neg,FN_pos,FN_neu,FN_neg):
+
+        TP_tot=TP_pos+TP_neu+TP_neg
+        FP_tot=FN_pos+FN_neu+FN_neg
+
+        try:
+            recall_1=TP_pos/(TP_pos+FN_pos)
+            recall_2=TP_neu/(TP_neu+FN_neu)
+            recall_3=TP_neg/(TP_neg+FN_neg)
+
+        except ZeroDivisionError:
+            return "Undefined Recall"
+        
+        finally:
+            macro=TP_tot/(TP_tot+FP_tot)
+            print("Macro Recall is: %d" % macro)
 
 def main():
 
     main_run=DiaryClassifiers()
     main_run.setDiary()
     main_run.setSearch()
-    main_run.accuracy()
+
+#   evaluation
+    #main_run.accuracy()
 
 if __name__=='__main__':
     main()
