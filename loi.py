@@ -318,7 +318,10 @@ class DiaryClassifiers():
 
             if event_a in ('positive','negative','neutral'):
                 a_num=locals()[event_a[:3]+ "_temp"]
-                prob_a_b=a_num/len(temp_y_val)
+                a_num_tot=len(temp_y_val)
+                prob_a_b=a_num/a_num_tot
+                print("Event B length %s" % a_num_tot)
+                pass
             
             else:
                 b_num=locals()[event_b[:3] + "_temp"]
@@ -402,7 +405,6 @@ class DiaryClassifiers():
         DiaryClassifiers.recall(TP_neu,FN_neu,label="neutral")
         DiaryClassifiers.recall(TP_neg,FN_neg,label="negative")
 
-
     def precision(TP,FP,label):
 
         try:
@@ -427,8 +429,8 @@ def main():
     main_run.setSearch()
 
 #   evaluation
-    pred_score,accuracy_score=DiaryClassifiers.accuracy(main_run)
-    DiaryClassifiers.prec_recall(pred_score,accuracy_score)
+    # pred_score,accuracy_score=DiaryClassifiers.accuracy(main_run)
+    # DiaryClassifiers.prec_recall(pred_score,accuracy_score)
 
 if __name__=='__main__':
     main()
