@@ -1,6 +1,6 @@
 import datetime
 from matplotlib import pyplot as plt
-from nltk.sentiment import SentimentIntensityAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 class DiaryClassifiers():
 
